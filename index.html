@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enkripsi dan Dekripsi Teks</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #2c3e50;
+        }
+
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+            margin: 5px;
+            width: 45%;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #result {
+            background: #f0f0f0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Enkripsi dan Dekripsi Teks</h2>
+        
+        <form id="encryptionForm">
+            <label for="plaintext">Teks:</label>
+            <textarea id="plaintext" rows="4" placeholder="Masukkan teks di sini"></textarea>
+
+            <label for="key">Kata Kunci:</label>
+            <input type="text" id="key" placeholder="Masukkan kata kunci">
+
+            <label for="algorithm">Algoritma:</label>
+            <select id="algorithm">
+                <option value="AES">AES</option>
+                <option value="DES">DES</option>
+                <option value="3DES">3DES</option>
+                <option value="Blowfish">Blowfish</option>
+                <option value="RC4">RC4</option>
+            </select>
+
+            <div class="button-group">
+                <button type="button" onclick="encryptText()">Enkripsi</button>
+                <button type="button" onclick="decryptText()">Dekripsi</button>
+            </div>
+        </form>
+
+        <h3>Hasil:</h3>
+        <textarea id="result" rows="4" readonly></textarea>
+    </div>
+
+    <script>
+        function encryptText() {
+            const plaintext = document.getElementById("plaintext").value;
+            const key = document.getElementById("key").value;
+            const algorithm = document.getElementById("algorithm").value;
+
+            let encrypted = '';
+
+            if (plaintext && key) {
+                switch (algorithm) {
+                    case 'AES':
+                        encrypted = CryptoJS.AES.encrypt(plaintext, key).toString();
+                        break;
+                    case 'DES':
+                        encrypted = CryptoJS.DES.encrypt(plaintext, key).toString();
+                        break;
+                    case '3DES':
+                        encrypted = CryptoJS.TripleDES.encrypt(plaintext, key).toString();
+                        break;
+                    case 'Blowfish':
+                        encrypted = CryptoJS.Blowfish.encrypt(plaintext, key).toString();
+                        break;
+                    case 'RC4':
+                        encrypted = CryptoJS.RC4.encrypt(plaintext, key).toString();
+                        break;
+                    default:
+                        alert('Algoritma tidak dikenal.');
+                }
+                document.getElementById("result").value = encrypted;
+            } else {
+                alert('Silakan masukkan teks dan kata kunci.');
+            }
+        }
+
+        function decryptText() {
+            const ciphertext = document.getElementById("plaintext").value;
+            const key = document.getElementById("key").value;
+            const algorithm = document.getElementById("algorithm").value;
+
+            let decrypted = '';
+
+            if (ciphertext && key) {
+                try {
+                    switch (algorithm) {
+                        case 'AES':
+                            decrypted = CryptoJS.AES.decrypt(ciphertext, key).toString(CryptoJS.enc.Utf8);
+                            break;
+                        case 'DES':
+                            decrypted = CryptoJS.DES.decrypt(ciphertext, key).toString(CryptoJS.enc.Utf8);
+                            break;
+                        case '3DES':
+                            decrypted = CryptoJS.TripleDES.decrypt(ciphertext, key).toString(CryptoJS.enc.Utf8);
+                            break;
+                        case 'Blowfish':
+                            decrypted = CryptoJS.Blowfish.decrypt(ciphertext, key).toString(CryptoJS.enc.Utf8);
+                            break;
+                        case 'RC4':
+                            decrypted = CryptoJS.RC4.decrypt(ciphertext, key).toString(CryptoJS.enc.Utf8);
+                            break;
+                        default:
+                            alert('Algoritma tidak dikenal.');
+                    }
+                    document.getElementById("result").value = decrypted || 'Dekripsi gagal: data tidak valid.';
+                } catch (error) {
+                    alert('Dekripsi gagal: data atau kata kunci tidak valid.');
+                }
+            } else {
+                alert('Silakan masukkan teks terenkripsi dan kata kunci.');
+            }
+        }
+    </script>
+</body>
+</html>
